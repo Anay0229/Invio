@@ -23,6 +23,12 @@ export interface Product {
   unit?: string; // piece, hour, day, kg, m, etc.
   category?: string; // service, goods, subscription, etc.
   taxDefinitionId?: string;
+  hsCode?: string;
+  countryOfOrigin?: string; // ISO 3166-1 alpha-2
+  lengthMm?: number;
+  widthMm?: number;
+  heightMm?: number;
+  weightG?: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -303,6 +309,12 @@ export interface CreateProductRequest {
   unit?: string;
   category?: string;
   taxDefinitionId?: string;
+  hsCode?: string | null;
+  countryOfOrigin?: string | null; // ISO 3166-1 alpha-2
+  lengthMm?: number | null;
+  widthMm?: number | null;
+  heightMm?: number | null;
+  weightG?: number | null;
 }
 
 export interface StatusHistoryEntry {
