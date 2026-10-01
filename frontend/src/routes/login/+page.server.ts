@@ -7,6 +7,7 @@ import {
 } from "$lib/backend";
 import { getDemoMode } from "$lib/demo";
 import { env } from "$env/dynamic/private";
+import { tKey } from "$lib/i18n/mod";
 
 export const load: PageServerLoad = async ({ locals, url }) => {
   if (locals.user) {
@@ -41,7 +42,7 @@ export const actions: Actions = {
     if (!isSecondStep) {
       if (!username || !password) {
         return fail(400, {
-          error: "Missing credentials",
+          error: tKey("Missing credentials"),
           username,
         });
       }
@@ -56,7 +57,7 @@ export const actions: Actions = {
         });
       } catch {
         return fail(500, {
-          error: "Unable to reach authentication server",
+          error: tKey("Unable to reach authentication server"),
           username,
         });
       }
@@ -65,14 +66,14 @@ export const actions: Actions = {
         data = await resp.json();
       } catch {
         return fail(500, {
-          error: "Invalid server response",
+          error: tKey("Invalid server response"),
           username,
         });
       }
 
       if (!resp.ok) {
         if (resp.status === 401) {
-          return fail(401, { error: "Invalid credentials", username });
+          return fail(401, { error: tKey("Invalid credentials"), username });
         }
 
         if (resp.status === 429) {
@@ -81,14 +82,14 @@ export const actions: Actions = {
 
           return fail(429, {
             error:
-              "Too many login attempts. Try again in {{minutes}} minute(s).",
+              tKey("Too many login attempts. Try again in {{minutes}} minute(s)."),
             errorParams: { minutes },
             username,
           });
         }
 
         return fail(resp.status, {
-          error: data?.error ?? "Login failed",
+          error: data?.error ?? tKey("Login failed"),
           username,
         });
       }
@@ -104,7 +105,7 @@ export const actions: Actions = {
       const useRecovery = Boolean(recoveryCode);
       if (!totpToken && !useRecovery) {
         return fail(400, {
-          error: "Enter your 2FA code or recovery code",
+          error: tKey("Enter your 2FA code or recovery code"),
           twoFactorRequired: true,
           twoFactorToken,
           username,
@@ -124,7 +125,7 @@ export const actions: Actions = {
         });
       } catch {
         return fail(500, {
-          error: "Unable to reach authentication server",
+          error: tKey("Unable to reach authentication server"),
           twoFactorRequired: true,
           twoFactorToken,
           username,
@@ -134,7 +135,7 @@ export const actions: Actions = {
         data = await resp.json();
       } catch {
         return fail(500, {
-          error: "Invalid server response",
+          error: tKey("Invalid server response"),
           twoFactorRequired: true,
           twoFactorToken,
           username,
@@ -142,7 +143,7 @@ export const actions: Actions = {
       }
       if (!resp.ok) {
         return fail(resp.status, {
-          error: data?.error ?? "2FA verification failed",
+          error: data?.error ?? tKey("2FA verification failed"),
           twoFactorRequired: true,
           twoFactorToken,
           username,
@@ -152,7 +153,7 @@ export const actions: Actions = {
 
     if (!data?.token) {
       return fail(500, {
-        error: "Login response missing token",
+        error: tKey("Login response missing token"),
         username,
       });
     }
@@ -173,14 +174,14 @@ export const actions: Actions = {
     try {
       resp = await fetch(`${BACKEND_URL}/api/v1/auth/oidc/authorize`);
     } catch {
-      return fail(500, { error: "Unable to reach authentication server" });
+      return fail(500, { error: tKey("Unable to reach authentication server") });
     }
     if (!resp.ok) {
-      return fail(503, { error: "SSO login is not available" });
+      return fail(503, { error: tKey("SSO login is not available") });
     }
     const data = await resp.json();
     if (!data?.url) {
-      return fail(500, { error: "Invalid SSO response" });
+      return fail(500, { error: tKey("Invalid SSO response") });
     }
     throw redirect(303, data.url);
   },

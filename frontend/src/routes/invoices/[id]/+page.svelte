@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte";
+  import { invoiceStatusLabel } from "$lib/i18n/mod";
   import { FileText, Edit, Copy, ExternalLink, Download, ArrowLeft, MoreHorizontal, FileCode2, ShieldOff, Send, Ban, Trash2, CheckCircle, Upload, Check, Pencil, ChevronDown, Mail } from "lucide-svelte";
   import { enhance } from "$app/forms";
   import { page } from "$app/state";
@@ -583,7 +584,7 @@
                         ? 'badge-info'
                         : 'badge-ghost'}"
               >
-                {t(entry.status.charAt(0).toUpperCase() + entry.status.slice(1))}
+                {t(invoiceStatusLabel(entry.status))}
               </span>
               <span class="text-sm opacity-60">{fmtDateTime(new Date(entry.changedAt))}</span>
               {#if entry.paymentMethod}
