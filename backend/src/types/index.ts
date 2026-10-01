@@ -80,6 +80,13 @@ export interface InvoiceItem {
   notes?: string;
   sortOrder: number;
   taxes?: InvoiceItemTax[];
+  // Snapshot of the product's shipping/customs fields when the item was saved (null when unset)
+  hsCode?: string | null;
+  countryOfOrigin?: string | null;
+  lengthMm?: number | null;
+  widthMm?: number | null;
+  heightMm?: number | null;
+  weightG?: number | null;
 }
 
 export interface InvoiceAttachment {

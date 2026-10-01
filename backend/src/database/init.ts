@@ -211,6 +211,13 @@ function ensureInvoiceItemColumns(database: DB): void {
     "product_id",
     "TEXT REFERENCES products(id)",
   );
+  // Snapshot of the product's shipping/customs fields at the time the item was saved
+  addColumnIfMissing(database, "invoice_items", "hs_code", "TEXT");
+  addColumnIfMissing(database, "invoice_items", "country_of_origin", "TEXT");
+  addColumnIfMissing(database, "invoice_items", "length_mm", "NUMERIC");
+  addColumnIfMissing(database, "invoice_items", "width_mm", "NUMERIC");
+  addColumnIfMissing(database, "invoice_items", "height_mm", "NUMERIC");
+  addColumnIfMissing(database, "invoice_items", "weight_g", "NUMERIC");
 }
 
 function ensureUserColumns(database: DB): void {
