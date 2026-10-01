@@ -7,19 +7,19 @@
  * all used keys exist in your translation files.
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const SRC_DIR = path.join(__dirname, "src");
 const LOCALES_DIR = path.join(__dirname, "src/lib/i18n/locales");
 const SOURCE_FILE = "en.json";
 
-// Regex patterns to match translation calls
-const T_PATTERNS = [
-  /\bt\(['"`]([^'"`]+)['"`]\)/g, // t("key") or t('key')
-  /\$t\(['"`]([^'"`]+)['"`]\)/g, // $t("key") - Svelte store syntax
-  /\{\s*t\(['"`]([^'"`]+)['"`]\)\s*\}/g, // { t("key") } - in templates
-];
+// Matches t("key"), t('key'), $t("key"), t("key", { params }) and tKey("key").
+// tKey() marks keys that are defined in one place and passed to t() later.
+const T_PATTERNS = [/(?<![\w.])(?:\$?t|tKey)\(\s*(["'`])((?:\\.|(?!\1)[^\\])*)\1\s*[,)]/gs];
 
 function findFiles(dir, extensions = [".svelte", ".ts", ".js"]) {
   let results = [];
@@ -50,7 +50,8 @@ function extractKeysFromFile(filePath) {
   for (const pattern of T_PATTERNS) {
     let match;
     while ((match = pattern.exec(content)) !== null) {
-      keys.add(match[1]);
+      if (match[1] === "`" && match[2].includes("${")) continue;
+      keys.add(match[1] === "`" ? match[2] : JSON.parse(`"${match[2].replace(/\\'/g, "'")}"`));
     }
   }
 
@@ -188,7 +189,7 @@ function extractAndSync() {
     console.log("\n✨ All translation files updated!");
     if (missingKeys.length > 0) {
       console.log(
-        '\n💡 Tip: Search for "[NEEDS TRANSLATION]" in de.json, nl.json, and pt-br.json',
+        '\n💡 Tip: Search for "[NEEDS TRANSLATION]" in the non-English locale files',
       );
     }
   } else {

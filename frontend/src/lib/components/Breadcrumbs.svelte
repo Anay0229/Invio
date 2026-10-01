@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { tKey } from "$lib/i18n/mod";
 
   interface Props {
     t: (key: string, params?: Record<string, string | number>) => string;
@@ -15,16 +16,17 @@
   }
 
   const LABEL_MAP: Record<string, string> = {
-    dashboard: "Dashboard",
-    invoices: "Invoices",
-    products: "Products",
-    customers: "Customers",
-    templates: "Templates",
-    settings: "Settings",
-    new: "New",
-    edit: "Edit",
-    html: "HTML",
-    pdf: "PDF",
+    dashboard: tKey("Dashboard"),
+    invoices: tKey("Invoices"),
+    products: tKey("Products"),
+    customers: tKey("Customers"),
+    users: tKey("Users"),
+    templates: tKey("Templates"),
+    settings: tKey("Settings"),
+    new: tKey("New"),
+    edit: tKey("Edit"),
+    html: tKey("HTML"),
+    pdf: tKey("PDF"),
   };
 
   let segments = $derived(

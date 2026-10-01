@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ShieldOff } from "lucide-svelte";
   import { getContext } from "svelte";
+  import { invoiceStatusLabel } from "$lib/i18n/mod";
 
   let { data } = $props();
 
@@ -200,7 +201,7 @@
             <td class="font-medium hover:underline">
               <a href={`/invoices/${inv.id}`}>{inv.invoiceNumber}</a>
               <div class="text-xs opacity-70 sm:hidden">
-                {t(inv.status?.charAt(0).toUpperCase() + (inv.status || "").slice(1))}
+                {t(invoiceStatusLabel(inv.status))}
               </div>
             </td>
             <td>{inv.customer?.name || ""}</td>

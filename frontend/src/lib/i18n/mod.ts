@@ -42,6 +42,26 @@ function formatWithParams(template: string, params?: TranslateParams): string {
   });
 }
 
+// Returns the key unchanged. Wrap strings that are passed to t() later through a
+// variable so extract-i18n-keys.js still finds them.
+export function tKey<K extends string>(key: K): K {
+  return key;
+}
+
+const INVOICE_STATUS_LABELS: Record<string, string> = {
+  draft: tKey("Draft"),
+  sent: tKey("Sent"),
+  complete: tKey("Complete"),
+  paid: tKey("Paid"),
+  overdue: tKey("Overdue"),
+  voided: tKey("Voided"),
+};
+
+// Translation key for an invoice status, e.g. "paid" -> "Paid"
+export function invoiceStatusLabel(status?: string): string {
+  return INVOICE_STATUS_LABELS[status ?? ""] ?? status ?? "";
+}
+
 export type TranslateFn = (key: string, params?: TranslateParams) => string;
 
 export function createTranslator(locale?: string): {

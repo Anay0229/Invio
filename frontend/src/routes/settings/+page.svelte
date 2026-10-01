@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Save, CircleAlert, Building2, Palette, Sun, Languages, LayoutTemplate, CreditCard, Percent, Package, Hash, FileCodeCorner, Shield } from "lucide-svelte";
   import { getContext } from "svelte";
+  import { tKey } from "$lib/i18n/mod";
   import { invalidateAll } from "$app/navigation";
   import { page } from "$app/state";
   import QRCode from "qrcode";
@@ -207,22 +208,22 @@
   }
 
   const sections = [
-    { id: "company", label: "Company", icon: Building2 },
-    { id: "branding", label: "Branding", icon: Palette },
-    { id: "appearance", label: "Appearance", icon: Sun },
-    { id: "localization", label: "Localization", icon: Languages },
+    { id: "company", label: tKey("Company"), icon: Building2 },
+    { id: "branding", label: tKey("Branding"), icon: Palette },
+    { id: "appearance", label: tKey("Appearance"), icon: Sun },
+    { id: "localization", label: tKey("Localization"), icon: Languages },
     {
       id: "templates",
-      label: "Templates",
+      label: tKey("Templates"),
       icon: LayoutTemplate,
       condition: () => data.hasTemplates,
     },
-    { id: "payments", label: "Payments", icon: CreditCard },
-    { id: "tax", label: "Tax", icon: Percent },
-    { id: "products", label: "Products", icon: Package },
-    { id: "numbering", label: "Numbering", icon: Hash },
-    { id: "xml", label: "XML Export", icon: FileCodeCorner },
-    { id: "security", label: "Security", icon: Shield, condition: () => !demoMode },
+    { id: "payments", label: tKey("Payments"), icon: CreditCard },
+    { id: "tax", label: tKey("Tax"), icon: Percent },
+    { id: "products", label: tKey("Products"), icon: Package },
+    { id: "numbering", label: tKey("Numbering"), icon: Hash },
+    { id: "xml", label: tKey("XML Export"), icon: FileCodeCorner },
+    { id: "security", label: tKey("Security"), icon: Shield, condition: () => !demoMode },
   ];
 
   function getSectionUrl(id: string) {
@@ -526,6 +527,7 @@
                 <option value="de">{t("Deutsch")}</option>
                 <option value="es">{t("Español")}</option>
                 <option value="tr">{t("Türkçe")}</option>
+                <option value="pt-br">{t("Português (Brasil)")}</option>
                 <option value="es-ar">{t("Español (Argentina)")}</option>
               </select>
             </label>
