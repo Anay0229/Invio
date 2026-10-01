@@ -294,7 +294,7 @@
           </div>
           <input type="number" class="input input-bordered w-full" bind:value={settings.defaultTaxRate} disabled={!canUpdateSettings} step="0.01" />
         </label>
-        <label class="label cursor-pointer justify-start gap-4">
+        <label class="label flex cursor-pointer justify-start gap-4">
           <input type="checkbox" class="checkbox" bind:checked={settings.defaultPricesIncludeTax} disabled={!canUpdateSettings} />
           <span class="label-text">{t("Default Prices Include Tax")}</span>
         </label>
@@ -565,7 +565,7 @@
               <CircleAlert size={16} />
               <span>{t("Allowing edits/deletes for sent or paid invoices can violate invoice retention laws. Only enable this if you understand the legal impact.")}</span>
             </div>
-            <label class="label cursor-pointer justify-start gap-4">
+            <label class="label flex cursor-pointer justify-start gap-4">
               <input type="checkbox" class="checkbox" bind:checked={settings.allowProtectedInvoiceChanges} disabled={!canUpdateSettings} />
               <span class="label-text">{t("Allow editing and deleting sent/paid invoices")}</span>
             </label>
@@ -597,7 +597,7 @@
         {:else if section === "numbering"}
           <div class="space-y-4">
             <h2 class="text-xl font-semibold">{t("Numbering")}</h2>
-            <label class="label cursor-pointer justify-start gap-4">
+            <label class="label flex cursor-pointer justify-start gap-4">
               <input type="checkbox" class="checkbox" bind:checked={settings.invoiceNumberingEnabled} disabled={!canUpdateSettings} />
               <span class="label-text">{t("Enable Automatic Invoice Numbering")}</span>
             </label>
@@ -638,11 +638,11 @@
                 {/if}
               </select>
             </label>
-            <label class="label cursor-pointer justify-start gap-4">
+            <label class="label flex cursor-pointer justify-start gap-4">
               <input type="checkbox" class="checkbox" bind:checked={settings.embedXmlInPdf} disabled={!canUpdateSettings} />
               <span class="label-text">{t("Embed XML in PDF")}</span>
             </label>
-            <label class="label cursor-pointer justify-start gap-4">
+            <label class="label flex cursor-pointer justify-start gap-4">
               <input type="checkbox" class="checkbox" bind:checked={settings.embedXmlInHtml} disabled={!canUpdateSettings} />
               <span class="label-text">{t("Embed XML in HTML")}</span>
             </label>
