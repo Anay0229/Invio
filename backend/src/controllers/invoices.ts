@@ -6,6 +6,7 @@ import {
 } from "../database/init.ts";
 import { getSetting } from "./settings.ts";
 import { getProductById } from "./products.ts";
+import { normalizeInvoiceLocaleSetting } from "../i18n/translations.ts";
 import {
   CreateInvoiceRequest,
   Invoice,
@@ -355,6 +356,7 @@ export const createInvoice = (
 
   const pricesIncludeTax = data.pricesIncludeTax ?? defaultPricesIncludeTax;
   const roundingMode = data.roundingMode || defaultRoundingMode;
+  const locale = normalizeInvoiceLocaleSetting(data.locale);
 
   const invoice: Invoice = {
     id: invoiceId,
@@ -375,6 +377,7 @@ export const createInvoice = (
 
     pricesIncludeTax,
     roundingMode,
+    locale,
 
     // Payment and notes
     paymentTerms,
@@ -392,8 +395,8 @@ export const createInvoice = (
       id, invoice_number, customer_id, issue_date, due_date, currency, status,
       subtotal, discount_amount, discount_percentage, tax_rate, tax_amount, total,
       payment_terms, notes, share_token, created_at, updated_at,
-      prices_include_tax, rounding_mode
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      prices_include_tax, rounding_mode, locale
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       invoice.id,
       invoice.invoiceNumber,
@@ -415,6 +418,7 @@ export const createInvoice = (
       invoice.updatedAt,
       pricesIncludeTax ? 1 : 0,
       roundingMode,
+      locale ?? null,
     ],
   );
   recordStatusChange(db, invoiceId, invoice.status || "draft");
@@ -568,7 +572,7 @@ export const getInvoices = (): Invoice[] => {
     SELECT id, invoice_number, customer_id, issue_date, due_date, currency, status,
            subtotal, discount_amount, discount_percentage, tax_rate, tax_amount, total,
            payment_terms, notes, share_token, created_at, updated_at,
-           prices_include_tax, rounding_mode
+           prices_include_tax, rounding_mode, locale
     FROM invoices
     ORDER BY created_at DESC
   `);
@@ -583,7 +587,7 @@ export const getInvoiceById = (id: string): InvoiceWithDetails | null => {
     SELECT id, invoice_number, customer_id, issue_date, due_date, currency, status,
            subtotal, discount_amount, discount_percentage, tax_rate, tax_amount, total,
            payment_terms, notes, share_token, created_at, updated_at,
-           prices_include_tax, rounding_mode
+           prices_include_tax, rounding_mode, locale
     FROM invoices
     WHERE id = ?
   `,
@@ -695,7 +699,7 @@ export const getInvoiceByShareToken = (
     SELECT id, invoice_number, customer_id, issue_date, due_date, currency, status,
            subtotal, discount_amount, discount_percentage, tax_rate, tax_amount, total,
            payment_terms, notes, share_token, created_at, updated_at,
-           prices_include_tax, rounding_mode
+           prices_include_tax, rounding_mode, locale
     FROM invoices
     WHERE share_token = ?
   `,
@@ -931,6 +935,7 @@ export const updateInvoice = async (
       payment_terms = ?, notes = ?, updated_at = ?,
       prices_include_tax = COALESCE(?, prices_include_tax),
       rounding_mode = COALESCE(?, rounding_mode),
+      locale = ?,
       invoice_number = COALESCE(?, invoice_number)
     WHERE id = ?
   `,
@@ -959,6 +964,9 @@ export const updateInvoice = async (
             : 0
           : null,
         data.roundingMode ?? null,
+        data.locale === undefined
+          ? (existing.locale ?? null)
+          : (normalizeInvoiceLocaleSetting(data.locale) ?? null),
         nextInvoiceNumber ?? null,
         id,
       ],
@@ -1214,8 +1222,8 @@ export const duplicateInvoice = async (
       id, invoice_number, customer_id, issue_date, due_date, currency, status,
       subtotal, discount_amount, discount_percentage, tax_rate, tax_amount, total,
       payment_terms, notes, share_token, created_at, updated_at,
-      prices_include_tax, rounding_mode
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      prices_include_tax, rounding_mode, locale
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
       [
         newId,
@@ -1238,6 +1246,7 @@ export const duplicateInvoice = async (
         now,
         (original as Invoice).pricesIncludeTax ? 1 : 0,
         (original as Invoice).roundingMode || "line",
+        (original as Invoice).locale ?? null,
       ],
     );
     // Copy items
@@ -1444,6 +1453,7 @@ function mapRowToInvoice(row: unknown[]): Invoice {
     updatedAt: new Date(row[17] as string),
     pricesIncludeTax: Boolean(row[18] as number),
     roundingMode: (row[19] as string) || "line",
+    locale: (row[20] as string) || undefined,
   };
 }
 
