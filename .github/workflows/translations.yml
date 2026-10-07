@@ -1,12 +1,8 @@
-name: Check translation files 
+name: Check translation files
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
-    paths:
-      - frontend/src/lib/i18n/locales/*
-  pull_request:
     branches: [main]
     paths:
       - frontend/src/lib/i18n/locales/*
