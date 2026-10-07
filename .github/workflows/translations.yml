@@ -1,4 +1,4 @@
- name: Check translation files0
+name: Check translation files
 
 on:
   workflow_dispatch:
